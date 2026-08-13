@@ -3,7 +3,7 @@ import logging
 
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
-from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForbidden
+from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForbidden, PeerIdInvalid, UsernameInvalid
 
 
 @Client.on_message(filters.incoming & filters.private, group=-1)
@@ -11,22 +11,23 @@ async def must_join_channel(bot: Client, msg: Message):
     if not MUST_JOIN:
         return
     try:
-        raw = str(MUST_JOIN).strip()
-        try:
-            if raw.startswith("-") or raw.isdigit():
+        raw = str(MUST_JOIN).strip().lstrip("@")
+        if not raw:
+            return
+
+        if raw.startswith("-") or raw.isdigit():
+            try:
                 chat_id = int(raw)
-            else:
+            except ValueError:
                 chat_id = raw
-        except ValueError:
+        else:
             chat_id = raw
 
         try:
             await bot.get_chat_member(chat_id, msg.from_user.id)
         except UserNotParticipant:
-            link = None
             if isinstance(chat_id, str) and not chat_id.startswith("-") and not chat_id.isdigit():
-                username = chat_id.lstrip("@")
-                link = f"https://t.me/{username}"
+                link = f"https://t.me/{chat_id}"
             else:
                 try:
                     chat_info = await bot.get_chat(chat_id)
@@ -56,7 +57,7 @@ async def must_join_channel(bot: Client, msg: Message):
                 await msg.stop_propagation()
             except ChatWriteForbidden:
                 pass
-    except ChatAdminRequired:
-        print(f"❖ ᴘʀᴏᴍᴏᴛᴇ ᴍᴇ ᴀs ᴀ ᴀᴅᴍɪɴ ɪɴ ᴍᴜsᴛ_ᴊᴏɪɴ ᴄʜᴀᴛ ➥ {MUST_JOIN} !")
+        except (ChatAdminRequired, PeerIdInvalid, UsernameInvalid) as e:
+            print(f"❖ MUST_JOIN error for chat '{MUST_JOIN}': {e}")
     except Exception as e:
         logging.warning(f"Error in must_join_channel: {e}")
