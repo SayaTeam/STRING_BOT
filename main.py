@@ -17,7 +17,7 @@ from pyromod import listen  # type: ignore
 from pyrogram.errors import ApiIdInvalid, ApiIdPublishedFlood, AccessTokenInvalid
 
 logging.basicConfig(
-    level=logging.WARNING, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
 class HealthCheckHandler(BaseHTTPRequestHandler):
@@ -56,12 +56,18 @@ if __name__ == "__main__":
     print("⬤ sᴛᴀʀᴛᴇᴅ ʏᴏᴜʀ ʙᴏᴛ...♥︎")
     try:
         app.start()
+        uname = app.get_me().username
+        print(f"⬤ @{uname} sᴛᴀʀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ...🏵️")
+        idle()
+        app.stop()
+        print("⬤ ʙᴏᴛ sᴛᴏᴘᴇᴅ...🪴")
     except (ApiIdInvalid, ApiIdPublishedFlood):
-        raise Exception("⬤ ʏᴏᴜʀ API_ID/API_HASH ɪs ɴᴏᴛ ᴠᴀʟɪᴅ...🌺")
+        logging.error("⬤ ʏᴏᴜʀ API_ID/API_HASH ɪs ɴᴏᴛ ᴠᴀʟɪᴅ...🌺")
     except AccessTokenInvalid:
-        raise Exception("⬤ ʏᴏᴜʀ BOT_TOKEN ɪs ɴᴏᴛ ᴠᴀʟɪᴅ...🌸")
-    uname = app.get_me().username
-    print(f"⬤ @{uname} sᴛᴀʀᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʟʏ...🏵️")
-    idle()
-    app.stop()
-    print("⬤ ʙᴏᴛ sᴛᴏᴘᴇᴅ...🪴")
+        logging.error("⬤ ʏᴏᴜʀ BOT_TOKEN ɪs ɴᴏᴛ ᴠᴀʟɪᴅ...🌸")
+    except Exception as e:
+        logging.error(f"⬤ Bot error: {e}")
+
+    # Keep process alive so web server thread stays active for Render health check
+    while True:
+        time.sleep(3600)
