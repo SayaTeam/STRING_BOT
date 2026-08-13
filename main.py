@@ -1,3 +1,11 @@
+import asyncio
+
+# Ensure an asyncio event loop exists in MainThread before importing Pyrogram
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
 import config
 import time
 import logging
