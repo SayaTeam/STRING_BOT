@@ -102,62 +102,40 @@ async def generate_session(bot: Client, msg: Message, telethon=False, old_pyro: 
         await msg.reply("⬤ ᴛʀʏɪɴɢ ᴛᴏ sᴇɴᴅ ᴏᴛᴩ ᴀᴛ ᴛʜᴇ ɢɪᴠᴇɴ ɴᴜᴍʙᴇʀ...")
     else:
         await msg.reply("⬤ ᴛʀʏɪɴɢ ᴛᴏ ʟᴏɢɪɴ ᴠɪᴀ ʙᴏᴛ ᴛᴏᴋᴇɴ...")
-    device_model = "Samsung SM-S918B"
+    device_model = "saya"
     system_version = "Android 14"
     app_version = "10.11.1"
 
-    if telethon and is_bot:
-        client = TelegramClient(
-            StringSession(),
-            api_id,
-            api_hash,
-            device_model=device_model,
-            system_version=system_version,
-            app_version=app_version,
-            lang_code="en",
-            system_lang_code="en"
-        )
-    elif telethon:
-        client = TelegramClient(
-            StringSession(),
-            api_id,
-            api_hash,
-            device_model=device_model,
-            system_version=system_version,
-            app_version=app_version,
-            lang_code="en",
-            system_lang_code="en"
-        )
-    elif is_bot:
-        client = Client(
-            name="bot",
-            api_id=api_id,
-            api_hash=api_hash,
-            bot_token=phone_number,
-            in_memory=True,
-            device_model=device_model,
-            system_version=system_version,
-            app_version=app_version
-        )
-    elif old_pyro:
-        client = Client1(
-            ":memory:",
-            api_id=api_id,
-            api_hash=api_hash,
-            device_model=device_model,
-            system_version=system_version,
-            app_version=app_version
-        )
-    else:
-        client = Client(
-            name="user",
-            api_id=api_id,
-            api_hash=api_hash,
-            in_memory=True,
-            device_model=device_model,
-            system_version=system_version,
-            app_version=app_version
-        )
+    async def create_client(dev_model, sys_ver, app_ver):
+        if telethon and is_bot:
+            return TelegramClient(
+                StringSession(), api_id, api_hash,
+                device_model=dev_model, system_version=sys_ver, app_version=app_ver,
+                lang_code="en", system_lang_code="en"
+            )
+        elif telethon:
+            return TelegramClient(
+                StringSession(), api_id, api_hash,
+                device_model=dev_model, system_version=sys_ver, app_version=app_ver,
+                lang_code="en", system_lang_code="en"
+            )
+        elif is_bot:
+            return Client(
+                name="bot", api_id=api_id, api_hash=api_hash, bot_token=phone_number, in_memory=True,
+                device_model=dev_model, system_version=sys_ver, app_version=app_ver
+            )
+        elif old_pyro:
+            return Client1(
+                ":memory:", api_id=api_id, api_hash=api_hash,
+                device_model=dev_model, system_version=sys_ver, app_version=app_ver
+            )
+        else:
+            return Client(
+                name="user", api_id=api_id, api_hash=api_hash, in_memory=True,
+                device_model=dev_model, system_version=sys_ver, app_version=app_ver
+            )
+
+    client = await create_client(device_model, system_version, app_version)
     await client.connect()
     try:
         code = None
@@ -174,9 +152,28 @@ async def generate_session(bot: Client, msg: Message, telethon=False, old_pyro: 
         return
     except Exception as e:
         if "UPDATE_APP_TO_LOGIN" in str(e) or "406" in str(e):
-            await msg.reply("⬤ **[406 UPDATE_APP_TO_LOGIN]**: Telegram requires logging in through an official app or updated client parameters.\n\n● ᴩʟᴇᴀsᴇ try again or check your account login settings.", reply_markup=InlineKeyboardMarkup(gen_button))
-            return
-        raise e
+            try:
+                await client.disconnect()
+            except Exception:
+                pass
+            client = await create_client("Telegram Desktop", "Windows 11 x64", "4.16.8")
+            await client.connect()
+            try:
+                if not is_bot:
+                    if telethon:
+                        code = await client.send_code_request(phone_number)
+                    else:
+                        code = await client.send_code(phone_number)
+            except Exception:
+                await msg.reply(
+                    "⬤ **[406 UPDATE_APP_TO_LOGIN]**: Telegram requires logging in using your own API_ID & API_HASH.\n\n"
+                    "● Please get your credentials from [my.telegram.org](https://my.telegram.org) and try generating again!",
+                    reply_markup=InlineKeyboardMarkup(gen_button),
+                    disable_web_page_preview=True
+                )
+                return
+        else:
+            raise e
     try:
         phone_code_msg = None
         if not is_bot:
