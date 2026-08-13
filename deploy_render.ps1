@@ -24,12 +24,13 @@ $body = @{
         plan = "free"
     }
     envVars = @(
-        @{ key = "API_ID"; value = "30422005" },
-        @{ key = "API_HASH"; value = "5170ded206641d73215baf40175a6924" },
-        @{ key = "BOT_TOKEN"; value = "8662603507:AAGdeAAT9xf7pMiITT6H_vENAsnyM95vyVg" },
+        @{ key = "PYTHON_VERSION"; value = "3.11.9" },
+        @{ key = "API_ID"; value = "33591348" },
+        @{ key = "API_HASH"; value = "d138b2ec1432ef7da497e8e3d451140b" },
+        @{ key = "BOT_TOKEN"; value = "8998263670:AAEqBPWcl0yL15IR5oqSvoohlVoUGvxlzt8" },
         @{ key = "OWNER_ID"; value = "5940554521" },
         @{ key = "MONGO_DB_URI"; value = "mongodb+srv://shnwazdeveloperx:shnwazdev@shnwazdev.sqmwbgl.mongodb.net/?appName=shnwazdev" },
-        @{ key = "MUST_JOIN"; value = "-1004460771158" }
+        @{ key = "MUST_JOIN"; value = "C4Botz" }
     )
 } | ConvertTo-Json -Depth 10
 

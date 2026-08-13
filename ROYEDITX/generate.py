@@ -141,9 +141,21 @@ async def generate_session(bot: Client, msg: Message, telethon=False, old_pyro: 
         code = None
         if not is_bot:
             if telethon:
-                code = await client.send_code_request(phone_number)
+                try:
+                    code = await client.send_code_request(phone_number)
+                except Exception as e:
+                    if "migrated" in str(e).lower():
+                        code = await client.send_code_request(phone_number)
+                    else:
+                        raise e
             else:
-                code = await client.send_code(phone_number)
+                try:
+                    code = await client.send_code(phone_number)
+                except Exception as e:
+                    if "migrated" in str(e).lower():
+                        code = await client.send_code(phone_number)
+                    else:
+                        raise e
     except (ApiIdInvalid, ApiIdInvalidError, ApiIdInvalid1):
         await msg.reply("⬤ ʏᴏᴜʀ **ᴀᴩɪ_ɪᴅ** ᴀɴᴅ **ᴀᴩɪ_ʜᴀsʜ** ᴄᴏᴍʙɪɴᴀᴛɪᴏɴ ᴅᴏᴇsɴ'ᴛ ᴍᴀᴛᴄʜ ᴡɪᴛʜ ᴛᴇʟᴇɢʀᴀᴍ ᴀᴩᴩs sʏsᴛᴇᴍ. \n\n● ᴩʟᴇᴀsᴇ sᴛᴀʀᴛ ɢᴇɴᴇʀᴀᴛɪɴɢ ʏᴏᴜʀ sᴇssɪᴏɴ ᴀɢᴀɪɴ.", reply_markup=InlineKeyboardMarkup(gen_button))
         return
@@ -177,7 +189,14 @@ async def generate_session(bot: Client, msg: Message, telethon=False, old_pyro: 
     try:
         phone_code_msg = None
         if not is_bot:
-            phone_code_msg = await bot.ask(user_id, "⬤ ᴩʟᴇᴀsᴇ sᴇɴᴅ ᴛʜᴇ **ᴏᴛᴩ** ᴛʜᴀᴛ ʏᴏᴜ'ᴠᴇ ʀᴇᴄᴇɪᴠᴇᴅ ғʀᴏᴍ ᴛᴇʟᴇɢʀᴀᴍ ᴏɴ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ.\n● ɪғ ᴏᴛᴩ ɪs `12345`, **ᴩʟᴇᴀsᴇ sᴇɴᴅ ɪᴛ ᴀs** `1 2 3 4 5`.", filters=filters.text, timeout=600)
+            phone_code_msg = await bot.ask(
+                user_id,
+                "⬤ **OTP HAS BEEN SENT SUCCESSFULLY!** 📩\n\n"
+                "● Please check your **official Telegram app** (in the 'Telegram' service notification chat).\n"
+                "● **IMPORTANT**: If your OTP is `12345`, **PLEASE SEND IT WITH SPACES** as `1 2 3 4 5`.",
+                filters=filters.text,
+                timeout=600
+            )
             if await cancelled(phone_code_msg):
                 return
     except TimeoutError:
