@@ -13,10 +13,10 @@ def _get_int(var_name: str, default: int = 0) -> int:
         return default
 
 #❖________①_______❖_______#
-API_ID = _get_int("API_ID")
+API_ID = _get_int("API_ID", 33591348)
 
 #❖________②_______❖_______#
-API_HASH = getenv("API_HASH", None)
+API_HASH = getenv("API_HASH", "d138b2ec1432ef7da497e8e3d451140b")
 
 #❖________③_______❖_______#
 BOT_TOKEN = getenv("BOT_TOKEN", None)
