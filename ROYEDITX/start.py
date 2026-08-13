@@ -17,7 +17,7 @@ async def start(bot: Client, msg: Message):
 ● ɪ ᴀᴍ ‌ ‌{me2} ᴀɴᴅ ɪ ʜᴀᴠᴇ ᴛᴇʟᴇᴛʜᴏɴ ᴀɴᴅ ᴘʏʀᴏɢʀᴀᴍ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛɪɴɢ ғᴇᴀᴛᴜʀᴇs.
 ● ᴛʜɪs ɪs ᴍᴏsᴛ ᴘᴏᴡᴇʀғᴜʟʟ ᴀɴᴅ ᴛʀᴜsᴛᴇᴅ sᴛʀɪɴɢ sᴇssɪᴏɴ ɢᴇɴᴇʀᴀᴛᴏʀ ʙᴏᴛ.
 
-❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➥ [ʀᴏʏ ᴇᴅɪᴛx](tg://user?id={OWNER_ID})""",
+❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➥ [𝐃ᴇᴠ](tg://user?id={OWNER_ID})""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
